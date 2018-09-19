@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  redis:
+    build: ./docker/redis
+    command: redis-server --appendonly yes --requirepass foobared
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - 6379:6379
+    volumes:
+       - ./docker/redis/bin:/data
+
+  app:
+    build: ./docker/golang
+    command: go run src/app/main.go
+    environment:
+      TZ: Asia/Tokyo
+    ports:
+      - 5000:5000
+    volumes:
+      - .:/go/src
+    depends_on:
+      - redis
